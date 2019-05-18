@@ -22,6 +22,12 @@ var ground;
 var dino;
 var cursors;
 var food;
+var heart;
+var health = 10;
+var right;
+var up;
+
+
 
 // create the game and pass it the configuration
 var game = new Phaser.Game(config);
@@ -33,6 +39,7 @@ function preload() {
     this.load.spritesheet('dino', 'assets/DinoSprites - mort.png', {frameWidth: 24, frameHeight: 24});
     this.load.image('ground', 'assets/scrolling ground.png');
     this.load.image('meat', 'assets/meat.34.png');
+    this.load.spritesheet('heart', 'assets/heart-meter.png', {frameWidth: 165, frameHeight: 122});
 };
 
 //executed once, after assets are loaded
@@ -66,13 +73,13 @@ function create() {
         repeat: -1
     });
 
-    // attempt at jumping animation
-    // this.anims.create({
-    //     key: 'jump',
-    //     frames: this.anims.generateFrameNumbers('dino', { start: 5, end: 6 }),
-    //     frameRate: 20, 
-    //     repeat: -1   
-    // });
+    // creating jump animation
+    this.anims.create({
+        key: 'jump',
+        frames: this.anims.generateFrameNumbers('dino', { start: 5, end: 6 }),
+        frameRate: 5, 
+        repeat: -1   
+    });
 
     // for when dino is not moving
     this.anims.create({
@@ -97,41 +104,78 @@ function create() {
 
     });
 
+    heart = this.physics.add.staticGroup();
+    
+    heart.create(70, 50, 'heart').setScale(.25).setOrigin(0, 0);
+    
+
+    this.anims.create({
+        key: 'fullHealth',
+        frames: [ { key: 'heart', frame: 0 } ],
+        frameRate: 20
+    });
+
+    this.anims.create({
+        key: 'halfHealth',
+        frames: [ { key: 'heart', frame: 1 } ],
+        frameRate: 20
+    });
+
+    this.anims.create({
+        key: 'noHealth',
+        frames: [ { key: 'heart', frame: 2 } ],
+        frameRate: 20
+    });
+
     //makes dino land on ground instead of bottom
     this.physics.add.collider(dino, ground);
     //makes food land on ground 
     this.physics.add.collider(food, ground);
     //detecting when dino meets food, setting up function for food collection
     this.physics.add.overlap(dino, food, collectFood, null, this);
-    
 }
 
 function update (){
     
     // when right arrow key is down 'crouch' animation will meatt
-    if (cursors.right.isDown){
+    right = cursors.right.isDown
+    up = cursors.up.isDown 
+    if (right){
         dino.setVelocityX(160);
 
         dino.anims.play('crouch', true);
     
+    }
+    //if up arrow is pressed & if dino is on platform/ground, he moves
+    if (up && dino.body.touching.down){
+        dino.setVelocityY(-330);
+        dino.anims.play('jump', true);
+    }
     // when nothing's pressed, dino doesn't move
-    }else {
+    if (!(up) && (!(right))) {
     dino.setVelocityX(0);
 
     dino.anims.play('stand');
     }
-    //if up arrow is pressed & if dino is on platform, ground, he moves
-    if (cursors.up.isDown && dino.body.touching.down){
-        dino.setVelocityY(-330);
-        //attempted implementation of jump animation
-        //dino.anims.play('jump', true);
-    }
+    if (health == 11){
+        //heart.anims.play('noHealth', true);
+        //console.log('11');
+        heart.disableBody(true, true);
+    };
+    
+
+    
+    
 
     
 }
 //food "body" is made inactive and invisible
 function collectFood (dino, meat){
     meat.disableBody(true, true);
-}
+
+    health += 1;
+    
+    
+};
 
 
