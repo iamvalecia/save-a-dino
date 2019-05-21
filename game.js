@@ -27,19 +27,15 @@ var health = 10;
 var right;
 var up;
 
-
-
 // create the game and pass it the configuration
 var game = new Phaser.Game(config);
 
-
 function preload() {
-
     //load images
     this.load.spritesheet('dino', 'assets/DinoSprites - mort.png', {frameWidth: 24, frameHeight: 24});
     this.load.image('ground', 'assets/scrolling ground.png');
     this.load.image('meat', 'assets/meat.34.png');
-    this.load.spritesheet('heart', 'assets/heart-meter.png', {frameWidth: 165, frameHeight: 122});
+    this.load.spritesheet('heart', 'assets/heart-meter.png', {frameWidth: 164.333, frameHeight: 122});
 };
 
 //executed once, after assets are loaded
@@ -47,12 +43,11 @@ function create() {
 
     // ground & creating a group 
     ground = this.physics.add.staticGroup();
-    
     ground.create(0, 550, 'ground');
     //ground.setOrigin(0, 0);
 
+
     //dino
-    console.log('Hey');
     //allows us to do things like .setBounce
     dino = this.physics.add.sprite(70, 150, 'dino');
 
@@ -72,7 +67,6 @@ function create() {
         frameRate: 10,
         repeat: -1
     });
-
     // creating jump animation
     this.anims.create({
         key: 'jump',
@@ -80,7 +74,6 @@ function create() {
         frameRate: 5, 
         repeat: -1   
     });
-
     // for when dino is not moving
     this.anims.create({
         key: 'stand',
@@ -88,8 +81,10 @@ function create() {
         frameRate: 20
     });
 
+
     //populates the cursors object with four properties: up, down, left, right,
     cursors = this.input.keyboard.createCursorKeys();
+
 
     //creating a group for our food
     food = this.physics.add.group({
@@ -99,16 +94,17 @@ function create() {
     });
 
     food.children.iterate(function (child) {
-
         child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
-
     });
 
-    heart = this.physics.add.staticGroup();
-    
-    heart.create(70, 50, 'heart').setScale(.25).setOrigin(0, 0);
-    
 
+    //creating heart meter
+    heart = this.physics.add.sprite(70, 50, 'heart');
+    heart.setScale(.25)
+    heart.setOrigin(0, 0);
+    // this sets the gravity for heart specifically
+    heart.body.setAllowGravity(false);
+    //health meter animation
     this.anims.create({
         key: 'fullHealth',
         frames: [ { key: 'heart', frame: 0 } ],
@@ -124,7 +120,7 @@ function create() {
     this.anims.create({
         key: 'noHealth',
         frames: [ { key: 'heart', frame: 2 } ],
-        frameRate: 20
+        frameRate: 20,
     });
 
     //makes dino land on ground instead of bottom
@@ -157,25 +153,27 @@ function update (){
 
     dino.anims.play('stand');
     }
-    if (health == 11){
-        //heart.anims.play('noHealth', true);
-        //console.log('11');
-        heart.disableBody(true, true);
-    };
-    
+    //test code for health meter
+    if (health === 10){
+        heart.anims.play('noHealth');
 
-    
-    
-
-    
+    }
+    if (health === 12){
+        heart.anims.play('halfHealth');
+    }
+    if (health == 13 ){
+    //if (!(health === 10) && (!(health === 12))){
+        heart.anims.play('fullHealth');
+    }
 }
+
+
 //food "body" is made inactive and invisible
 function collectFood (dino, meat){
     meat.disableBody(true, true);
 
     health += 1;
-    
-    
 };
+
 
 
