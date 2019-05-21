@@ -25,6 +25,7 @@ var food;
 var heart;
 var health = 10;
 var right;
+var left;
 var up;
 
 // create the game and pass it the configuration
@@ -70,7 +71,7 @@ function create() {
     // creating jump animation
     this.anims.create({
         key: 'jump',
-        frames: this.anims.generateFrameNumbers('dino', { start: 5, end: 6 }),
+        frames: [ { key: 'dino', frame: 6}],
         frameRate: 5, 
         repeat: -1   
     });
@@ -132,11 +133,29 @@ function create() {
 }
 
 function update (){
-    
-    // when right arrow key is down 'crouch' animation will meatt
+    left = cursors.left.isDown
     right = cursors.right.isDown
     up = cursors.up.isDown 
-    if (right){
+
+//if left arrow is pressed and dino is faced right, make him face left
+    if (left && dino.flipX == false){
+        dino.flipX = !dino.flipX;
+        
+    }
+//if right arrow is pressed and dino is facing left, make him face right    
+    if (right && dino.flipX == true) {
+        dino.flipX = !dino.flipX;
+        
+    }
+//if dino is already faced left, make him move left
+    if (left){
+        dino.setVelocityX(-160);
+
+        dino.anims.play('crouch', true);
+        
+    }
+    // when right arrow key is down 'crouch' animation will meat
+    if (right) {
         dino.setVelocityX(160);
 
         dino.anims.play('crouch', true);
@@ -148,7 +167,7 @@ function update (){
         dino.anims.play('jump', true);
     }
     // when nothing's pressed, dino doesn't move
-    if (!(up) && (!(right))) {
+    if (!(up) && (!(right)) && (!(left))) {
     dino.setVelocityX(0);
 
     dino.anims.play('stand');
