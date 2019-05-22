@@ -27,6 +27,8 @@ var health = 10;
 var right;
 var left;
 var up;
+var healthText;
+
 
 // create the game and pass it the configuration
 var game = new Phaser.Game(config);
@@ -41,6 +43,11 @@ function preload() {
 
 //executed once, after assets are loaded
 function create() {
+
+    // create text for Health Meter
+    healthText = this.add.text(32, 32, 'Health:', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red',
+    strokeThickness: 5, });
+
 
     // ground & creating a group 
     ground = this.physics.add.staticGroup();
@@ -100,7 +107,7 @@ function create() {
 
 
     //creating heart meter
-    heart = this.physics.add.sprite(70, 50, 'heart');
+    heart = this.physics.add.sprite(160, 30, 'heart');
     heart.setScale(.25)
     heart.setOrigin(0, 0);
     // this sets the gravity for heart specifically
@@ -130,7 +137,7 @@ function create() {
     this.physics.add.collider(food, ground);
     //detecting when dino meets food, setting up function for food collection
     this.physics.add.overlap(dino, food, collectFood, null, this);
-}
+    }
 
 function update (){
     left = cursors.left.isDown
@@ -192,7 +199,6 @@ function collectFood (dino, meat){
     meat.disableBody(true, true);
 
     health += 1;
-};
 
-
-
+    
+}
