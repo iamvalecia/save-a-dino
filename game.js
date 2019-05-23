@@ -28,6 +28,12 @@ var right;
 var left;
 var up;
 var healthText;
+var asteroids;
+var gameOver = false;
+
+var time;
+var timedEvent;
+
 
 
 // create the game and pass it the configuration
@@ -39,15 +45,15 @@ function preload() {
     this.load.image('ground', 'assets/scrolling ground.png');
     this.load.image('meat', 'assets/meat.34.png');
     this.load.spritesheet('heart', 'assets/heart-meter.png', {frameWidth: 164.333, frameHeight: 122});
+    this.load.image('asteroid', 'assets/Meteor2.png');
+    this.load.text('healthText');
 };
 
 //executed once, after assets are loaded
 function create() {
 
     // create text for Health Meter
-    healthText = this.add.text(32, 32, 'Health:', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red',
-    strokeThickness: 5, });
-
+    healthText = this.add.text(32, 32, 'Health:', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5, });
 
     // ground & creating a group 
     ground = this.physics.add.staticGroup();
@@ -88,6 +94,13 @@ function create() {
         frames: [ { key: 'dino', frame: 0 } ],
         frameRate: 20
     });
+    // dino die animation
+    this.anims.create({
+        key: 'die',
+        frames: this.anims.generateFrameNumbers('dino', { start: 14, end: 16 }),
+        frameRate: 5,
+        repeat: -1
+    });
 
 
     //populates the cursors object with four properties: up, down, left, right,
@@ -105,6 +118,10 @@ function create() {
         child.setBounceY(Phaser.Math.FloatBetween(0.2, 0.4));
     });
 
+    asteroids = this.physics.add.group();
+    
+    //signals for asteroids to start in 5.5 seconds
+    timedEvent = this.time.addEvent({ delay: 5500, callback: asteroidDrop, callbackScope: this, loop: true });
 
     //creating heart meter
     heart = this.physics.add.sprite(160, 30, 'heart');
@@ -131,15 +148,28 @@ function create() {
         frameRate: 20,
     });
 
+    
+
     //makes dino land on ground instead of bottom
     this.physics.add.collider(dino, ground);
     //makes food land on ground 
     this.physics.add.collider(food, ground);
+    this.physics.add.collider(asteroids, ground, asteroidExplosion, null, this);
+    this.physics.add.collider(dino, asteroids, hitByAsteroids, null, this);
     //detecting when dino meets food, setting up function for food collection
     this.physics.add.overlap(dino, food, collectFood, null, this);
     }
 
 function update (){
+//if gameOver this keeps dino from running in place
+
+    if (gameOver)
+    {
+        //this stops asteroids from recreating
+        timedEvent.paused = true;
+        return dino.anims.play('die');
+    }
+    
     left = cursors.left.isDown
     right = cursors.right.isDown
     up = cursors.up.isDown 
@@ -179,7 +209,7 @@ function update (){
 
     dino.anims.play('stand');
     }
-    //test code for health meter
+    
     if (health === 10){
         heart.anims.play('noHealth');
 
@@ -191,14 +221,34 @@ function update (){
     //if (!(health === 10) && (!(health === 12))){
         heart.anims.play('fullHealth');
     }
+    
 }
 
 
 //food "body" is made inactive and invisible
 function collectFood (dino, meat){
     meat.disableBody(true, true);
-
     health += 1;
-
+}
+//called during timedEvent via addEvent method in create function
+function asteroidDrop(){
+    var x = (dino.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+    var asteroid = asteroids.create(x, 16, 'asteroid');
+    asteroid.setVelocity(Phaser.Math.Between(-200, 200), 20);
+}
+//
+function hitByAsteroids (dino, asteroids){
+    this.physics.pause();
+    //dino turns red
+    dino.setTint(0xff0000);
+    gameOver = true;
+}
+//
+function asteroidExplosion (asteroid, ground) {
+    console.log(1*8);
+    asteroid.disableBody(true, true);
     
 }
+
+
+
