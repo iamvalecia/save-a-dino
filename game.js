@@ -30,9 +30,9 @@ var up;
 var healthText;
 var asteroids;
 var gameOver = false;
-
 var time;
 var timedEvent;
+var explosion;
 
 
 
@@ -46,14 +46,14 @@ function preload() {
     this.load.image('meat', 'assets/meat.34.png');
     this.load.spritesheet('heart', 'assets/heart-meter.png', {frameWidth: 164.333, frameHeight: 122});
     this.load.image('asteroid', 'assets/Meteor2.png');
-    this.load.text('healthText');
+    this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 32, frameHeight: 32});
 };
 
 //executed once, after assets are loaded
 function create() {
 
     // create text for Health Meter
-    healthText = this.add.text(32, 32, 'Health:', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5, });
+    healthText = this.add.text(32, 32, 'Health:', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press asteroidt 2P"', stroke: 'red', strokeThickness: 5, });
 
     // ground & creating a group 
     ground = this.physics.add.staticGroup();
@@ -120,8 +120,11 @@ function create() {
 
     asteroids = this.physics.add.group();
     
-    //signals for asteroids to start in 5.5 seconds
+    //signals for asteroids to asteroidt in 5.5 seconds
     timedEvent = this.time.addEvent({ delay: 5500, callback: asteroidDrop, callbackScope: this, loop: true });
+
+    explosion = this.physics.add.sprite();
+    
 
     //creating heart meter
     heart = this.physics.add.sprite(160, 30, 'heart');
@@ -155,12 +158,15 @@ function create() {
     //makes food land on ground 
     this.physics.add.collider(food, ground);
     this.physics.add.collider(asteroids, ground, asteroidExplosion, null, this);
+    this.physics.add.collider(explosion, ground);
     this.physics.add.collider(dino, asteroids, hitByAsteroids, null, this);
     //detecting when dino meets food, setting up function for food collection
     this.physics.add.overlap(dino, food, collectFood, null, this);
     }
 
 function update (){
+
+
 //if gameOver this keeps dino from running in place
 
     if (gameOver)
@@ -245,10 +251,14 @@ function hitByAsteroids (dino, asteroids){
 }
 //
 function asteroidExplosion (asteroid, ground) {
-    console.log(1*8);
+    console.log(1-8);
     asteroid.disableBody(true, true);
+    var x = asteroid.x;
+    var y = asteroid.y;
+    //this(below) doesn't work here either
+    //this.physics.add.collider(explosion, ground);
+    explosion = this.physics.add.sprite(x, y, 'explosion');
+    explosion.setScale(3);
     
+
 }
-
-
-
