@@ -12,6 +12,7 @@ var config = {
         }
     },
     scene: {
+        init: init,
         preload: preload,
         create: create,
         update: update
@@ -29,22 +30,29 @@ var left;
 var up;
 var healthText;
 var gameOver = false;
-var smallMeteors;
-var bigMeteor;
+var smallAsteroids;
+var bigAsteroid;
+// this.enemySpeed = 2;
+//     this.enemyMaxY = 280;
+//     this.enemyMinY = 80;
 
 
 // create the game and pass it the configuration
 var game = new Phaser.Game(config);
 
-
+function init() {
+    this.asteroidSpeed = 2;
+    this.asteroidMaxY = 375;
+    this.asteroidMinY = -15;
+}
 
 function preload() {
     //load images
     this.load.image('background', 'assets/background.png');
     this.load.spritesheet('dino', 'assets/DinoSprites - mort.png', {frameWidth: 24, frameHeight: 24});
     this.load.image('food', 'assets/meat.34.png');
-    this.load.image('meteor', 'assets/Meteor2.png');
-    this.load.image('bigMeteor', 'assets/Meteor1.png')
+    this.load.image('asteroid', 'assets/meteor2.png');
+    this.load.image('bigAsteroid', 'assets/meteor1.png')
     };
 
 //executed once, after assets are loaded
@@ -58,6 +66,8 @@ function create() {
 
     //player
     dino = this.physics.add.sprite(40, this.sys.game.config.height /2, 'dino')
+
+    
 
     food = this.physics.add.sprite(this.sys.game.config.width - 80, this.sys.game.config.height / 2, 'food');
 
@@ -97,21 +107,31 @@ function create() {
 
     this.physics.add.overlap(dino, food, collectfood, null, this);
 
-    // creating the meteor group
-    smallMeteors = this.add.group({
-        key: 'meteor',
+    // creating the asteroid group
+    smallAsteroids = this.physics.add.group({
+        key: 'asteroid',
         repeat: 3,
         setXY: {
             x: 110,
             y: 100,
             stepX: 80,
             stepY: 20
-        }
+        },
+        //did not care about using capital A
+        allowGravity: true,
+        gravityY: 400
     });
 
-    bigMeteor = this.add.sprite(520, -15, 'bigMeteor')
+    //smallAsteroids.body.allowGravity(true);
 
-    
+    bigAsteroid = this.physics.add.sprite(520, -15, 'bigAsteroid');
+    bigAsteroid.body.setAllowGravity(true);
+    bigAsteroid.setGravityY(400);
+
+    //set speed of dragons & this actually makes them move
+    // Phaser.Actions.Call(smallAsteroids.getChildren(), function(asteroid) {
+    //     asteroid.speed = Math.random() * 2 + 1;
+    // }, this);
     
 }
 
@@ -150,7 +170,38 @@ function update (){
     dino.anims.play('stand');
     }
 
-    
+    if (smallAsteroids.y === 300)
+    {
+        smallAsteroids.disableBody(true, true);
+        //  A new batch of stars to collect
+        smallAsteroids.children.iterate(function (child) {
+
+            child.enableBody(true, child.x, 0, true, true);
+
+        })
+    }
+
+    //asteroid movement
+    // let asteroidChildren = smallAsteroids.getChildren();
+    // let numAsteroidChildren = asteroidChildren.length;
+
+    // for (let i = 0;i < numAsteroidChildren; i++) {
+
+    //     //move asteroidChildren
+    //     asteroidChildren[i].y += asteroidChildren[i].speed;
+
+    // my idea
+    //     if (asteroidChildren[i].y === this.asteroidMaxY) {
+    //         asteroidChildren[i].disableBody();
+    //         asteroidChildren[i].enableBody(true, asteroidChildren[i].x, 0, true, true);
+    //     }
+        //reverse movement when reached y limits
+        // if (asteroidChildren[i].y >= this.asteroidMaxY && asteroidChildren[i].speed > 0) {
+        //     asteroidChildren[i].speed *= -1;
+        // } else if (asteroidChildren[i].y <= this.asteroidMinY && asteroidChildren[i].speed < 0) {
+        //     asteroidChildren[i].speed *= -1;
+        // }
+        //
 }
     
 
