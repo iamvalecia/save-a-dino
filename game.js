@@ -12,7 +12,7 @@ var config = {
         }
     },
     scene: {
-        init: init,
+        // init: init,
         preload: preload,
         create: create,
         update: update
@@ -32,19 +32,17 @@ var healthText;
 var gameOver = false;
 var smallAsteroids;
 var bigAsteroid;
-// this.enemySpeed = 2;
-//     this.enemyMaxY = 280;
-//     this.enemyMinY = 80;
+
+var timedEvent;
+//considering variables
+// var initBigAsteroidGrav = ;
+// var reverseBigAsteroidGrav = ;
 
 
 // create the game and pass it the configuration
 var game = new Phaser.Game(config);
 
-function init() {
-    this.asteroidSpeed = 2;
-    this.asteroidMaxY = 375;
-    this.asteroidMinY = -15;
-}
+
 
 function preload() {
     //load images
@@ -126,16 +124,14 @@ function create() {
 
     bigAsteroid = this.physics.add.sprite(520, -15, 'bigAsteroid');
     bigAsteroid.body.setAllowGravity(true);
-    bigAsteroid.setGravityY(400);
+    bigAsteroid.setGravityY(350);
 
-    //set speed of dragons & this actually makes them move
-    // Phaser.Actions.Call(smallAsteroids.getChildren(), function(asteroid) {
-    //     asteroid.speed = Math.random() * 2 + 1;
-    // }, this);
-    
+       
+    timedEvent = this.time.addEvent({ delay: 1600, callback: asteroidGravityChange, callbackScope: this, loop: true });
+
 }
 
-function update (){
+function update (time){
     left = cursors.left.isDown
     right = cursors.right.isDown
 
@@ -170,38 +166,8 @@ function update (){
     dino.anims.play('stand');
     }
 
-    if (smallAsteroids.y === 300)
-    {
-        smallAsteroids.disableBody(true, true);
-        //  A new batch of stars to collect
-        smallAsteroids.children.iterate(function (child) {
 
-            child.enableBody(true, child.x, 0, true, true);
-
-        })
-    }
-
-    //asteroid movement
-    // let asteroidChildren = smallAsteroids.getChildren();
-    // let numAsteroidChildren = asteroidChildren.length;
-
-    // for (let i = 0;i < numAsteroidChildren; i++) {
-
-    //     //move asteroidChildren
-    //     asteroidChildren[i].y += asteroidChildren[i].speed;
-
-    // my idea
-    //     if (asteroidChildren[i].y === this.asteroidMaxY) {
-    //         asteroidChildren[i].disableBody();
-    //         asteroidChildren[i].enableBody(true, asteroidChildren[i].x, 0, true, true);
-    //     }
-        //reverse movement when reached y limits
-        // if (asteroidChildren[i].y >= this.asteroidMaxY && asteroidChildren[i].speed > 0) {
-        //     asteroidChildren[i].speed *= -1;
-        // } else if (asteroidChildren[i].y <= this.asteroidMinY && asteroidChildren[i].speed < 0) {
-        //     asteroidChildren[i].speed *= -1;
-        // }
-        //
+    
 }
     
 
@@ -231,5 +197,19 @@ function collectfood (dino, food) {
     counter += 1;
    }
     
+}
+
+//getting asteroids to reverse
+function asteroidGravityChange() {
+    //with some test variables/code (following 2-3 lines)
+    var  bigG = bigAsteroid.body.gravity.y;
+    console.log(bigG);
+    if (bigG > 1) {
+        bigAsteroid.setGravityY(-350);
+        bigAsteroid.setVelocityY(-160);
+    } else {
+        bigAsteroid.setGravityY(350);
+        bigAsteroid.setVelocityY(160);
+    }
 }
 
