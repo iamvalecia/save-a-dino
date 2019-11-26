@@ -28,7 +28,7 @@ var lifeYears = 1;
 var right;
 var left;
 var up;
-var healthText;
+var lifeYearsText;
 var gameOver = false;
 var smallAsteroids;
 var bigAsteroid;
@@ -67,12 +67,12 @@ function create() {
 
     
 
-    food = this.physics.add.sprite(this.sys.game.config.width - 80, this.sys.game.config.height / 2, 'food');
+    food = this.physics.add.sprite(this.sys.game.config.width - 70, this.sys.game.config.height / 2, 'food');
 
     
 
     // create text for Health Meter
-    healthText = this.add.text(32, 32, 'Health:', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red',
+    lifeYearsText = this.add.text(32, 32, 'Life Years: ' + lifeYears, { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red',
     strokeThickness: 5, });
 
     //scale up
@@ -120,15 +120,16 @@ function create() {
         gravityY: 400
     });
 
-    //smallAsteroids.body.allowGravity(true);
-
     bigAsteroid = this.physics.add.sprite(520, -15, 'bigAsteroid');
     bigAsteroid.body.setAllowGravity(true);
     bigAsteroid.setGravityY(350);
 
        
     timedEvent = this.time.addEvent({ delay: 1600, callback: asteroidGravityChange, callbackScope: this, loop: true });
+    
+    
 
+    this.physics.add.overlap(dino, bigAsteroid, hitByBigAsteroid, null, this);
 }
 
 function update (time){
@@ -150,7 +151,7 @@ function update (time){
         dino.setVelocityX(-160);
 
         dino.anims.play('crouch', true);
-        //dino.x += -this.dinoSpeed;
+        
     }
 // when right arrow key is down 'crouch' animation 
     if (right) {
@@ -164,10 +165,7 @@ function update (time){
     dino.setVelocityX(0);
 
     dino.anims.play('stand');
-    }
-
-
-    
+    }    
 }
     
 
@@ -179,22 +177,26 @@ this.gameOver = function() {
 
 function collectfood (dino, food) {
     food.disableBody(true, true);
+//only want there to be a total of 10 food collections
     if (counter === 10 ) {
         //this.gameOver();
         return;
     } else{
     var x = food.x;
-    lifeYears = lifeYears + 3;
-
-    if (x === 560) {
+    
+//sends food to the opposite side of screen
+    if (x === 570) {
         x = 40;
     }else{
-        x = 560;
+        x = 570;
     }
 
     food.enableBody(true, x, this.sys.game.config.height / 2, true, true);
-    
+//tracks how many food has been distributed    
     counter += 1;
+//updates score on food collection
+    lifeYears = lifeYears + 3;
+    lifeYearsText.setText('Life Years: ' + lifeYears);
    }
     
 }
@@ -211,5 +213,24 @@ function asteroidGravityChange() {
         bigAsteroid.setGravityY(350);
         bigAsteroid.setVelocityY(160);
     }
+//^ after a while this loop leads the bigAsteroid not going off screen before it reverses
+// will check standard length of game to see affects
 }
 
+function hitByBigAsteroid(dino, bigAsteroid) {
+    dino.setTint(0xff0000);
+    this.cameras.main.shake(500);
+    //dino.setTint(0xffffff);
+    this.time.delayedCall(500, function() { dino.clearTint()},[], this);
+//this keeps score from updating as asteroid slides over dino
+    bigAsteroid.disableBody(true, true);
+    bigAsteroid.enableBody(true, 520, -15, true, true);
+// calling this function interrupts or contradicts the timedEvent but test affects
+    asteroidGravityChange();
+
+//update score everytime dino is hit
+    lifeYears = lifeYears - 5;
+    lifeYearsText.setText('Life Years: ' + lifeYears);
+    
+
+}
