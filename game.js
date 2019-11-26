@@ -33,7 +33,7 @@ var gameOver = false;
 var smallAsteroids;
 var bigAsteroid;
 
-var timedEvent;
+var bigAsteroidReverse;
 //considering variables
 // var initBigAsteroidGrav = ;
 // var reverseBigAsteroidGrav = ;
@@ -111,13 +111,13 @@ function create() {
         repeat: 3,
         setXY: {
             x: 110,
-            y: 100,
+            y: -100,
             stepX: 80,
             stepY: 20
         },
         //did not care about using capital A
         allowGravity: true,
-        gravityY: 400
+        gravityY: 350
     });
 
     bigAsteroid = this.physics.add.sprite(520, -15, 'bigAsteroid');
@@ -125,11 +125,12 @@ function create() {
     bigAsteroid.setGravityY(350);
 
        
-    timedEvent = this.time.addEvent({ delay: 1600, callback: asteroidGravityChange, callbackScope: this, loop: true });
-    
+    bigAsteroidReverse = this.time.addEvent({ delay: 1600, callback: bigAsteroidGravityChange, callbackScope: this, loop: true });
+    smallAsteroidsReverse = this.time.addEvent({ delay: 1900, callback: smallAsteroidsGravityChange, callbackScope: this, loop: true });
     
 
     this.physics.add.overlap(dino, bigAsteroid, hitByBigAsteroid, null, this);
+    this.physics.add.overlap(dino, smallAsteroids, hitBySmallAsteroid, null, this);
 }
 
 function update (time){
@@ -202,7 +203,7 @@ function collectfood (dino, food) {
 }
 
 //getting asteroids to reverse
-function asteroidGravityChange() {
+function bigAsteroidGravityChange() {
     //with some test variables/code (following 2-3 lines)
     var  bigG = bigAsteroid.body.gravity.y;
     console.log(bigG);
@@ -217,6 +218,23 @@ function asteroidGravityChange() {
 // will check standard length of game to see affects
 }
 
+function smallAsteroidsGravityChange() {
+
+    smallAsteroids.children.iterate(function (child) {
+
+        var g  = child.body.gravity.y
+
+    
+        if (g > 1) {
+            child.setGravityY(-350);
+            child.setVelocityY(-100);
+        } else {
+            child.setGravityY(350);
+            child.setVelocityY(100);
+        }
+    });
+}
+
 function hitByBigAsteroid(dino, bigAsteroid) {
     dino.setTint(0xff0000);
     this.cameras.main.shake(500);
@@ -225,12 +243,30 @@ function hitByBigAsteroid(dino, bigAsteroid) {
 //this keeps score from updating as asteroid slides over dino
     bigAsteroid.disableBody(true, true);
     bigAsteroid.enableBody(true, 520, -15, true, true);
-// calling this function interrupts or contradicts the timedEvent but test affects
-    asteroidGravityChange();
+// calling this function interrupts or contradicts the bigAsteroidReverse but test affects
+    bigAsteroidGravityChange();
 
 //update score everytime dino is hit
     lifeYears = lifeYears - 5;
     lifeYearsText.setText('Life Years: ' + lifeYears);
-    
-
 }
+
+//result of dino getting hit by a small asteroid
+//really needs work, worse than bigAsteroid, perhaps create small asteroids separately
+function hitBySmallAsteroid(dino, smallAsteroids) {
+    dino.setTint(0xff0000);
+    this.cameras.main.shake(500);
+    this.time.delayedCall(500, function() { dino.clearTint()},[], this);
+    var x = smallAsteroids.x;
+    var i = (x-110) / 80 
+    var y = (i*20) + -100;
+    var g = smallAsteroids.body.gravity.y;
+    smallAsteroids.disableBody(true, true);
+    smallAsteroids.enableBody(true, x, y, true, true);
+    smallAsteroidsGravityChange();
+
+    lifeYears = lifeYears - 1;
+    lifeYearsText.setText('Life Years: ' + lifeYears);
+}
+
+
