@@ -110,14 +110,15 @@ function create() {
         key: 'asteroid',
         repeat: 3,
         setXY: {
-            x: 110,
+            x: 120,
             y: -100,
-            stepX: 80,
+            stepX: 90,
             stepY: 20
         },
         //did not care about using capital A
         allowGravity: true,
-        gravityY: 350
+        gravityY: 350,
+        setVelocityY: 100
     });
 
     bigAsteroid = this.physics.add.sprite(520, -15, 'bigAsteroid');
@@ -166,7 +167,7 @@ function update (time){
     dino.setVelocityX(0);
 
     dino.anims.play('stand');
-    }    
+    }        
 }
     
 
@@ -197,7 +198,7 @@ function collectfood (dino, food) {
     counter += 1;
 //updates score on food collection
     lifeYears = lifeYears + 3;
-    lifeYearsText.setText('Life Years: ' + lifeYears);
+    lifeYearsText.setText('Life Years: ' + Math.ceil(lifeYears));
    }
     
 }
@@ -242,31 +243,22 @@ function hitByBigAsteroid(dino, bigAsteroid) {
     this.time.delayedCall(500, function() { dino.clearTint()},[], this);
 //this keeps score from updating as asteroid slides over dino
     bigAsteroid.disableBody(true, true);
+// this.time.delayedCall(1600, function() { bigAsteroid.enableBody(true, bigAsteroid.x, bigAsteroid.y, true, true);},[], this);
     bigAsteroid.enableBody(true, 520, -15, true, true);
 // calling this function interrupts or contradicts the bigAsteroidReverse but test affects
     bigAsteroidGravityChange();
-
 //update score everytime dino is hit
     lifeYears = lifeYears - 5;
-    lifeYearsText.setText('Life Years: ' + lifeYears);
+    lifeYearsText.setText('Life Years: ' + Math.ceil(lifeYears));
 }
 
 //result of dino getting hit by a small asteroid
-//really needs work, worse than bigAsteroid, perhaps create small asteroids separately
 function hitBySmallAsteroid(dino, smallAsteroids) {
     dino.setTint(0xff0000);
     this.cameras.main.shake(500);
     this.time.delayedCall(500, function() { dino.clearTint()},[], this);
-    var x = smallAsteroids.x;
-    var i = (x-110) / 80 
-    var y = (i*20) + -100;
-    var g = smallAsteroids.body.gravity.y;
-    smallAsteroids.disableBody(true, true);
-    smallAsteroids.enableBody(true, x, y, true, true);
-    smallAsteroidsGravityChange();
-
-    lifeYears = lifeYears - 1;
-    lifeYearsText.setText('Life Years: ' + lifeYears);
+    lifeYears = lifeYears - 0.14;
+    lifeYearsText.setText('Life Years: ' + Math.ceil(lifeYears));
 }
 
 
