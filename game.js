@@ -27,12 +27,15 @@ var cursors;
 var lifeYears = 1;
 var right;
 var left;
-var up;
 var lifeYearsText;
 var gameOver = false;
 var smallAsteroids;
 var bigAsteroid;
-var bigAsteroidReverse;
+//added this to use .ignore
+var bg;
+var gameOverText;
+var foodCollectedText;
+var winOrLoseText;
 
 
 // create the game and pass it the configuration
@@ -51,19 +54,18 @@ function preload() {
 function create() {
 
     //background
-    let bg = this.add.sprite(0, 0, 'background');
+    bg = this.add.sprite(0, 0, 'background');
 
     //change origin of background sprite, notice bg variable
     bg.setOrigin(0, 0);
-
+    
     //player
     dino = this.physics.add.sprite(40, this.sys.game.config.height /2, 'dino')
 
     food = this.physics.add.sprite(this.sys.game.config.width - 70, this.sys.game.config.height / 2, 'food');
 
     // create text for Life Year
-    lifeYearsText = this.add.text(32, 32, 'Life Years: ' + lifeYears, { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red',
-    strokeThickness: 5, });
+    lifeYearsText = this.add.text(22, 22, 'Life Years: ' + lifeYears, { fontSize: '10px', fill: 'white',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 1, });
 
     //scale up
     dino.setScale(2);
@@ -133,7 +135,6 @@ function create() {
     this.physics.add.overlap(dino, bigAsteroid, hitByBigAsteroid, null, this);
     this.physics.add.overlap(dino, food, collectfood, null, this);
 
-
 //helps with fade out
     this.isGameOver = false;
 }
@@ -183,30 +184,32 @@ function update (){
         this.isGameOver = true;
         this.physics.pause();
         dino.setTint(0xff0000); //red
+        this.cameras.main.ignore(bg)
+        this.cameras.main.setBackgroundColor('rgba(0,0,0, 0.5)'); //black
         dino.anims.play('dead');
-        this.cameras.main.fadeOut(2500);
+        this.time.delayedCall(5000, function() { this.cameras.main.fadeOut(3000)},[], this);
     }
 
     if (foodCollected === 10) {
         this.physics.pause();
         dino.anims.play('win');
-        this.time.delayedCall(3000, function() { this.cameras.main.fadeOut(3000)},[], this);
+        this.time.delayedCall(6000, function() { this.cameras.main.fadeOut(3000)},[], this);
     // here it makes the game fade out
         this.isGameOver = true;
     }
 
 //manipulates DOM at end of game
     if (this.isGameOver) {
-        document.getElementById("gameStatus").innerHTML = "GAME OVER";
-        document.getElementById("gameScore").innerHTML = "You captured " + (foodCollected) + " out of 10 food sources";
+        gameOverText = this.add.text(202, 52, 'GAME OVER', { fontSize: '26px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
+        foodCollectedText = this.add.text(21, 132, 'You captured ' + foodCollected + ' out of 10 food sources', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5}); 
         if (foodCollected === 10) {
-            document.getElementById("winOrLose").innerHTML = "YOU WIN! And Survive a Generation";
+            winOrLoseText = this.add.text(45, 207, 'YOU WIN! And Survive a Generation', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         }else{
-            document.getElementById("winOrLose").innerHTML = "YOU LOSE and PERISH!!!";
+            winOrLoseText = this.add.text(152, 207, 'YOU LOSE and PERISH!!!', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         }
     }
 }
-    
+
 function collectfood (dino, food) {
     food.disableBody(true, true);
 //tracks how many food dino has collected 
@@ -259,7 +262,6 @@ function hitByBigAsteroid(dino, bigAsteroid) {
     this.cameras.main.shake(500);
 //this keeps score from updating as asteroid slides over dino
     bigAsteroid.disableBody(true, true);
-// this.time.delayedCall(1600, function() { bigAsteroid.enableBody(true, bigAsteroid.x, bigAsteroid.y, true, true);},[], this);
     bigAsteroid.enableBody(true, 520, -15, true, true);
 // calling this function helps the bigAsteroid movements behave longer
     bigAsteroidGravityChange();
