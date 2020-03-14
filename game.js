@@ -183,7 +183,7 @@ function update (){
         this.isGameOver = true;
         this.physics.pause();
         dino.setTint(0xff0000); //red
-        this.cameras.main.ignore(bg)
+        bg.setVisible(false);
         this.cameras.main.setBackgroundColor('rgba(0,0,0, 0.5)'); //black
         dino.anims.play('dead');
         this.time.delayedCall(5000, function() { this.cameras.main.fadeOut(3000)},[], this);
