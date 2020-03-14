@@ -25,8 +25,6 @@ var food;
 var foodCollected = 0;
 var cursors;
 var lifeYears = 1;
-var right;
-var left;
 var lifeYearsText;
 var gameOver = false;
 var smallAsteroids;
@@ -145,8 +143,8 @@ function update (){
         return;
     }
 
-    left = cursors.left.isDown
-    right = cursors.right.isDown
+    var left = cursors.left.isDown
+    var right = cursors.right.isDown
 
 //if left arrow is pressed and dino is faced right, make him face left
     if (left && dino.flipX == false){
@@ -173,7 +171,7 @@ function update (){
     }
     
     // when nothing's pressed, dino doesn't move
-    if ((!(right)) && (!(left))) {
+    if (!right && !left) {
     dino.setVelocityX(0);
 
     dino.anims.play('stand');
