@@ -198,7 +198,7 @@ function update (){
         this.isGameOver = true;
     }
 
-//manipulates DOM at end of game
+//writes new text on game canvas
     if (this.isGameOver) {
         gameOverText = this.add.text(202, 52, 'GAME OVER', { fontSize: '26px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         foodCollectedText = this.add.text(21, 132, 'You captured ' + foodCollected + ' out of 10 food sources', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5}); 
@@ -207,6 +207,9 @@ function update (){
         }else{
             winOrLoseText = this.add.text(152, 207, 'YOU LOSE and PERISH!!!', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         }
+        this.time.delayedCall(8000, function() {this.scene.restart()},[], this);
+        this.isGameOver = false
+        this.cameras.main.resetFX()
     }
 }
 
