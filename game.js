@@ -22,11 +22,11 @@ var config = {
 
 var dino;
 var food;
-var foodCollected = 0;
+var foodCollected;
 var cursors;
-var lifeYears = 1;
+var lifeYears;
 var lifeYearsText;
-var gameOver = false;
+var gameOver;
 var smallAsteroids;
 var bigAsteroid;
 //added this to use .ignore
@@ -50,6 +50,10 @@ function preload() {
 
 //executed once, after assets are loaded
 function create() {
+
+    foodCollected = 0;
+    lifeYears = 1;
+    gameOver = false;
 
     //background
     bg = this.add.sprite(0, 0, 'background');
@@ -132,9 +136,6 @@ function create() {
     this.physics.add.overlap(dino, smallAsteroids, hitBySmallAsteroid, null, this);
     this.physics.add.overlap(dino, bigAsteroid, hitByBigAsteroid, null, this);
     this.physics.add.overlap(dino, food, collectfood, null, this);
-
-//helps with fade out
-    this.isGameOver = false;
 }
 
 function update (){
