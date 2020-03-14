@@ -186,13 +186,11 @@ function update (){
         bg.setVisible(false);
         this.cameras.main.setBackgroundColor('rgba(0,0,0, 0.5)'); //black
         dino.anims.play('dead');
-        this.time.delayedCall(5000, function() { this.cameras.main.fadeOut(3000)},[], this);
     }
 
     if (foodCollected === 10) {
         this.physics.pause();
         dino.anims.play('win');
-        this.time.delayedCall(6000, function() { this.cameras.main.fadeOut(3000)},[], this);
     // here it makes the game fade out
         this.isGameOver = true;
     }
@@ -206,9 +204,12 @@ function update (){
         }else{
             winOrLoseText = this.add.text(152, 207, 'YOU LOSE and PERISH!!!', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         }
-        this.time.delayedCall(8000, function() {this.scene.restart()},[], this);
-        this.isGameOver = false
-        this.cameras.main.resetFX()
+        this.time.delayedCall(5000, function() {
+            this.cameras.main.fadeOut(3000);
+        }, [], this);
+        this.time.delayedCall(8000, function() {
+            this.scene.restart();
+        }, [], this);
     }
 }
 
