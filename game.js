@@ -140,7 +140,7 @@ function create() {
 
 function update (){
 //if game is over then dino can't move
-    if (this.isGameOver) {
+    if (gameOver) {
         return;
     }
 
@@ -180,7 +180,7 @@ function update (){
     
     if (lifeYears <= -1)  {
     // here it keeps fade out from repeating
-        this.isGameOver = true;
+        gameOver = true;
         this.physics.pause();
         dino.setTint(0xff0000); //red
         bg.setVisible(false);
@@ -192,11 +192,11 @@ function update (){
         this.physics.pause();
         dino.anims.play('win');
     // here it makes the game fade out
-        this.isGameOver = true;
+        gameOver = true;
     }
 
 //writes new text on game canvas
-    if (this.isGameOver) {
+    if (gameOver) {
         gameOverText = this.add.text(202, 52, 'GAME OVER', { fontSize: '26px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         foodCollectedText = this.add.text(21, 132, 'You captured ' + foodCollected + ' out of 10 food sources', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5}); 
         if (foodCollected === 10) {
