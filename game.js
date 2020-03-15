@@ -22,13 +22,11 @@ var config = {
 
 var dino;
 var food;
-var foodCollected = 0;
+var foodCollected;
 var cursors;
-var lifeYears = 1;
-var right;
-var left;
+var lifeYears;
 var lifeYearsText;
-var gameOver = false;
+var gameOver;
 var smallAsteroids;
 var bigAsteroid;
 //added this to use .ignore
@@ -52,6 +50,10 @@ function preload() {
 
 //executed once, after assets are loaded
 function create() {
+
+    foodCollected = 0;
+    lifeYears = 1;
+    gameOver = false;
 
     //background
     bg = this.add.sprite(0, 0, 'background');
@@ -134,19 +136,16 @@ function create() {
     this.physics.add.overlap(dino, smallAsteroids, hitBySmallAsteroid, null, this);
     this.physics.add.overlap(dino, bigAsteroid, hitByBigAsteroid, null, this);
     this.physics.add.overlap(dino, food, collectfood, null, this);
-
-//helps with fade out
-    this.isGameOver = false;
 }
 
 function update (){
 //if game is over then dino can't move
-    if (this.isGameOver) {
+    if (gameOver) {
         return;
     }
 
-    left = cursors.left.isDown
-    right = cursors.right.isDown
+    var left = cursors.left.isDown
+    var right = cursors.right.isDown
 
 //if left arrow is pressed and dino is faced right, make him face left
     if (left && dino.flipX == false){
@@ -173,7 +172,7 @@ function update (){
     }
     
     // when nothing's pressed, dino doesn't move
-    if ((!(right)) && (!(left))) {
+    if (!right && !left) {
     dino.setVelocityX(0);
 
     dino.anims.play('stand');
@@ -181,25 +180,23 @@ function update (){
     
     if (lifeYears <= -1)  {
     // here it keeps fade out from repeating
-        this.isGameOver = true;
+        gameOver = true;
         this.physics.pause();
         dino.setTint(0xff0000); //red
-        this.cameras.main.ignore(bg)
+        bg.setVisible(false);
         this.cameras.main.setBackgroundColor('rgba(0,0,0, 0.5)'); //black
         dino.anims.play('dead');
-        this.time.delayedCall(5000, function() { this.cameras.main.fadeOut(3000)},[], this);
     }
 
     if (foodCollected === 10) {
         this.physics.pause();
         dino.anims.play('win');
-        this.time.delayedCall(6000, function() { this.cameras.main.fadeOut(3000)},[], this);
     // here it makes the game fade out
-        this.isGameOver = true;
+        gameOver = true;
     }
 
 //writes new text on game canvas
-    if (this.isGameOver) {
+    if (gameOver) {
         gameOverText = this.add.text(202, 52, 'GAME OVER', { fontSize: '26px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         foodCollectedText = this.add.text(21, 132, 'You captured ' + foodCollected + ' out of 10 food sources', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5}); 
         if (foodCollected === 10) {
@@ -207,9 +204,12 @@ function update (){
         }else{
             winOrLoseText = this.add.text(152, 207, 'YOU LOSE and PERISH!!!', { fontSize: '16px', fill: 'orange',  fontFamily: '"Press Start 2P"', stroke: 'red', strokeThickness: 5});
         }
-        this.time.delayedCall(8000, function() {this.scene.restart()},[], this);
-        this.isGameOver = false
-        this.cameras.main.resetFX()
+        this.time.delayedCall(5000, function() {
+            this.cameras.main.fadeOut(3000);
+        }, [], this);
+        this.time.delayedCall(8000, function() {
+            this.scene.restart();
+        }, [], this);
     }
 }
 
