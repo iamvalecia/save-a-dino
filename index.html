@@ -7,10 +7,28 @@
     <title>Save-A-Dino</title>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap');
+        
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
         * {
             font-family: 'Press Start 2P', cursive;;
             text-align: center;
         } 
+        body {
+        /*ancestor of .credits needs a postion to work  */   
+            position: relative;
+        }
+        .credits {
+/*want the credits to be position at the bottom of the whole page*/
+            position: absolute;
+            bottom: -75%;
+            left: 10%;
+            line-height: 1.25;
+        }
     </style>
     <script src="phaser.js"></script>
     <script src="game.js"></script>
@@ -22,7 +40,12 @@
     <h1>Save-A-Dino</h1>
     <p>Help your dino survive another generation.</p>
 
-    
-    
+    <div class="credits">
+        <h3>CREDITS</h3>
+        <p> <a href="https://arks.itch.io/dino-characters" target="_blank">"Dino Characters" </a>  <br>is licensed under CC 4.0 <br> by <a href="https://twitter.com/ScissorMarks" target="_blank">Arks </a> </p>
+        <p>Thanks to Zenva Academy for the background</p>
+        <p>Thanks to jppresents and samme of the <a href="https://phaser.discourse.group/c/phaser3/5" target="_blank">Phaser Discourse Group</a></p>
+        <p>Game developed by Valecia Briars</p>
+    </div>    
 </body>
 </html>
