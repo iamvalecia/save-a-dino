@@ -22,13 +22,49 @@
         /*ancestor of .credits needs a postion to work  */   
             position: relative;
         }
+        h2 {
+            padding-bottom: 10px;
+            font-size: 16px;
+        }
         .credits {
 /*want the credits to be position at the bottom of the whole page*/
             position: absolute;
             bottom: -75%;
-            left: 10%;
+            left: 25%;
+            right: 25%;
             line-height: 1.25;
+            /* margin-top: 25px; */
         }
+        
+        @media screen and (max-width: 415px){
+            h1{
+                font-size: 26px;
+            }
+            h2, p {
+                font-size: 12px;
+            }
+            canvas{
+                width: 350px;
+            }
+            .credits{
+                bottom: -150%;
+            }
+        }
+        @media screen and (min-width: 416px) and (max-width: 740px)  {
+            .credits{
+                bottom: -180%;
+            }
+            h1 {
+                color: red;
+            }
+            .intro {
+                position: absolute;
+                bottom: -50%;
+                left: 33%;
+                right: 33%;
+            }
+        }
+        
     </style>
     <script src="phaser.js"></script>
     <script src="game.js"></script>
@@ -37,15 +73,17 @@
     
 </head>
 <body>
-    <h1>Save-A-Dino</h1>
-    <p>Help your dino survive another generation.</p>
+    <section class="intro">
+        <h1>Save-A-Dino</h1>
+        <h2>Help your dino survive another generation.</h2>
+    </section>
 
-    <div class="credits">
+    <section class="credits">
         <h3>CREDITS</h3>
         <p> <a href="https://arks.itch.io/dino-characters" target="_blank">"Dino Characters" </a>  <br>is licensed under CC 4.0 <br> by <a href="https://twitter.com/ScissorMarks" target="_blank">Arks </a> </p>
         <p>Thanks to Zenva Academy for the background</p>
         <p>Thanks to jppresents and samme of the <a href="https://phaser.discourse.group/c/phaser3/5" target="_blank">Phaser Discourse Group</a></p>
         <p>Game developed by Valecia Briars</p>
-    </div>    
+    </section>    
 </body>
 </html>
