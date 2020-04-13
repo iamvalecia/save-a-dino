@@ -12,13 +12,11 @@ var config = {
         }
     },
     scene: {
-        // init: init,
         preload: preload,
         create: create,
         update: update
     }
 };
-
 
 var dino;
 var food;
@@ -29,7 +27,6 @@ var lifeYearsText;
 var gameOver;
 var smallAsteroids;
 var bigAsteroid;
-//added this to use .ignore
 var bg;
 var gameOverText;
 var foodCollectedText;
@@ -45,14 +42,15 @@ function preload() {
     this.load.spritesheet('dino', 'assets/DinoSprites - mort.png', {frameWidth: 24, frameHeight: 24});
     this.load.image('food', 'assets/meat.34.png');
     this.load.image('asteroid', 'assets/meteor2.png');
-    this.load.image('bigAsteroid', 'assets/meteor1.png')
-    };
+    this.load.image('bigAsteroid', 'assets/meteor1.png');
+}
 
 //executed once, after assets are loaded
 function create() {
 
     foodCollected = 0;
-    lifeYears = 1;
+    //changed it to 0 for more challenge
+    lifeYears = 0;
     gameOver = false;
 
     //background
@@ -62,7 +60,7 @@ function create() {
     bg.setOrigin(0, 0);
     
     //player
-    dino = this.physics.add.sprite(40, this.sys.game.config.height /2, 'dino')
+    dino = this.physics.add.sprite(40, this.sys.game.config.height /2, 'dino');
 
     food = this.physics.add.sprite(this.sys.game.config.width - 70, this.sys.game.config.height / 2, 'food');
 
@@ -119,7 +117,6 @@ function create() {
             stepX: 90,
             stepY: 20
         },
-        //did not care about using capital A
         allowGravity: true,
         gravityY: 350,
         setVelocityY: 100
@@ -139,59 +136,49 @@ function create() {
 }
 
 function update (){
-//if game is over then dino can't move
+//if game is over then dino is completely frozen
     if (gameOver) {
         return;
     }
 
-    var left = cursors.left.isDown
-    var right = cursors.right.isDown
+    var left = cursors.left.isDown;
+    var right = cursors.right.isDown;
 
 //if left arrow is pressed and dino is faced right, make him face left
     if (left && dino.flipX == false){
         dino.flipX = !dino.flipX;
-        
     }
 //if right arrow is pressed and dino is facing left, make him face right    
     if (right && dino.flipX == true) {
         dino.flipX = !dino.flipX;
-        
     }
-//if dino is already faced left, make him move left
+//if left arrow is pressed and dino is faced left
     if (left){
         dino.setVelocityX(-160);
-
         dino.anims.play('crouch', true);
-        
     }
-// when right arrow key is down 'crouch' animation 
+//if right arrow is pressed and dino is faced right 
     if (right) {
         dino.setVelocityX(160);
-        
         dino.anims.play('crouch', true);
     }
-    
-    // when nothing's pressed, dino doesn't move
+// when nothing's pressed, dino doesn't move
     if (!right && !left) {
     dino.setVelocityX(0);
-
     dino.anims.play('stand');
     }   
     
     if (lifeYears <= -1)  {
-    // here it keeps fade out from repeating
         gameOver = true;
         this.physics.pause();
         dino.setTint(0xff0000); //red
         bg.setVisible(false);
-        this.cameras.main.setBackgroundColor('rgba(0,0,0, 0.5)'); //black
         dino.anims.play('dead');
     }
 
     if (foodCollected === 10) {
         this.physics.pause();
         dino.anims.play('win');
-    // here it makes the game fade out
         gameOver = true;
     }
 
@@ -218,7 +205,7 @@ function collectfood (dino, food) {
 //tracks how many food dino has collected 
     foodCollected += 1;
 //only want there to be a total of 10 food distributions
-    if (foodCollected < 10 ) 
+    if (foodCollected < 10 ) {
         var foodX = food.x;
 //sends food to the opposite side of screen
         if (foodX === 570) {
@@ -230,6 +217,7 @@ function collectfood (dino, food) {
 //updates score on food collection
     lifeYears = lifeYears + 3;
     lifeYearsText.setText('Life Years: ' + Math.ceil(lifeYears)); 
+    }
 }
 
 //getting asteroids to reverse
@@ -250,7 +238,7 @@ will check standard length of game to see affects */
 //this function is called every 1.9 seconds
 function smallAsteroidsGravityChange() {
     smallAsteroids.children.iterate(function (child) {
-        var smallAsteroidGravity  = child.body.gravity.y
+        var smallAsteroidGravity  = child.body.gravity.y;
         if (smallAsteroidGravity > 1) {
             child.setGravityY(-350);
             child.setVelocityY(-100);
@@ -276,6 +264,7 @@ function hitByBigAsteroid(dino, bigAsteroid) {
 //result of dino getting hit by a small asteroid
 function hitBySmallAsteroid(dino, smallAsteroids) {
     this.cameras.main.shake(500);
-    lifeYears = lifeYears - 0.14;
+// this math compensates for asteroid-dino overlap
+    lifeYears = lifeYears - 0.14; 
     lifeYearsText.setText('Life Years: ' + Math.ceil(lifeYears));
 }
