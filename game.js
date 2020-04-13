@@ -41,8 +41,8 @@ function preload() {
     this.load.image('background', 'assets/background.png');
     this.load.spritesheet('dino', 'assets/DinoSprites - mort.png', {frameWidth: 24, frameHeight: 24});
     this.load.image('food', 'assets/meat.34.png');
-    this.load.image('asteroid', 'assets/meteor2.png');
-    this.load.image('bigAsteroid', 'assets/meteor1.png');
+    this.load.image('asteroid', 'assets/Meteor2.png');
+    this.load.image('bigAsteroid', 'assets/Meteor1.png');
 }
 
 //executed once, after assets are loaded
